@@ -1,39 +1,56 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Microondas Benner";
+
+<h1>Simulador de Micro-ondas</h1>
+
+<div>
+    <label>Tempo (segundos 1-120):</label>
+    <input type="number" id="tempo" min="1" max="120" value="30" />
+</div>
+
+<div>
+    <label>Potência (1-10):</label>
+    <input type="number" id="potencia" min="1" max="10" value="10" />
+</div>
+
+<button id="btnIniciar">Iniciar</button>
+<button id="btnMais30">+30 segundos</button>
+<button id="btnPausarCancelar">Pausar / Cancelar</button>
+
+<div style="margin-top: 20px;">
+    <strong>Progresso:</strong>
+    <pre id="progresso" style="font-size: 24px; min-height: 100px;">Aguardando...</pre>
+    <p id="mensagem" style="color: red;"></p>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/microondasHub")
+            .build();
+
+        connection.on("AtualizarProgresso", (mensagem) => {
+            document.getElementById("progresso").innerText = mensagem;
+        });
+
+        connection.on("Erro", (erro) => {
+            document.getElementById("mensagem").innerText = erro;
+        });
+
+        connection.start().catch(err => console.error(err));
+
+        document.getElementById("btnIniciar").onclick = async () => {
+            const tempo = parseInt(document.getElementById("tempo").value);
+            const potencia = parseInt(document.getElementById("potencia").value);
+            await connection.invoke("Iniciar", tempo, potencia);
+        };
+
+        document.getElementById("btnMais30").onclick = async () =>
+            await connection.invoke("Adicionar30s");
+
+        document.getElementById("btnPausarCancelar").onclick = async () =>
+            await connection.invoke("PausarOuCancelar");
+    </script>
 }
-
-<h1 class="display-4">Microondas Benner</h1>
-
-<form method="post">
-    <label>Tempo em segundos:</label>
-    <input asp-for="Tempo" type="number" min="1" max="120" />
-    <br />
-    <label>Potência:</label>
-    <input asp-for="Potencia" type="number" min="1" max="10" />
-    <br />
-    <button type="submit" asp-page-handler="Iniciar">Iniciar</button>
-    <button type="button" onclick="pausar()">Pausar/Cancelar</button>
-</form>
-
-<h3>@Model.Status</h3>
-<p>@Model.Mensagem</p>
-
-<script>
-    let timer;
-    function iniciar()
-    {
-        timer = setInterval(
-        () => {
-            fetch('/Index?handler=Atualizar') 
-                .then(r => r.text())
-                .then(status => document.querySelector('h3').innerText = status);
-        }, 1000);
-    }
-
-    function pausar()
-    {
-        clearInterval(timer);
-    }
-</script>
