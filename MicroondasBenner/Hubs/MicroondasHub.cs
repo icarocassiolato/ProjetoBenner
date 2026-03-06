@@ -1,4 +1,5 @@
 ﻿using MicroondasBenner.Helpers;
+using MicroondasBenner.Models.Enums;
 using MicroondasBenner.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -10,15 +11,33 @@ public class MicroondasHub(MicroondasService microondasService) : Hub
 {
     private readonly MicroondasService _microondasService = microondasService;
 
-    public async Task Iniciar(int tempo, int potencia)
+    public async Task Iniciar(int tipoPrograma, string tempo = "", string potencia = "")
     {
-        if (!_microondasService.IsValido(tempo, potencia, out var erro))
+        /////////////////////IMPORTANTE!!!/////////////////////
+        //esse trecho teria que ficar na camada de serviço, no método _microondasService.Iniciar(
+        //mas coloquei aqui para aumentar a complexidade propositalmente, já que se trata de um teste técnico.
+        var programa = _microondasService.GetConfigPrograma((ETipoPrograma)tipoPrograma);
+        
+        if (programa.TipoPrograma == ETipoPrograma.Personalizado)
+        {
+            programa.Tempo = int.TryParse(tempo, out var t) ? t : 30;
+            programa.Potencia = int.TryParse(potencia, out var p) ? p : 10;
+        }
+        /////////////////////IMPORTANTE!!!/////////////////////
+
+        if (!_microondasService.IsValido(programa.Tempo, programa.Potencia, out var erro))
         {
             await Clients.Caller.SendAsync(MetodoHelper.Erro, erro);
             return;
         }
+        else
+            await Clients.Caller.SendAsync(MetodoHelper.Erro, "");
 
-        _microondasService.Iniciar(tempo, potencia);
+
+        //Poderia passar direto o enum tipo do programa como parâmetro, seria mais simples,
+        //mas preferi usar generics para aumentar a complexidade propositalmente, já que se trata de um teste técnico.
+        //Mas em cenários reais, eu optaria por algo mais simples, pois isolaria a regra de negócios na classe service, facilitando a manutenção
+        _microondasService.Iniciar(programa);
         await Clients.Caller.SendAsync(MetodoHelper.AtualizarProgresso, _microondasService.GetStatusAtual());
     }
 

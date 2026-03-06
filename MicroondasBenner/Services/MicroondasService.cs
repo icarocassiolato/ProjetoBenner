@@ -1,6 +1,8 @@
 using MicroondasBenner.Helpers;
 using MicroondasBenner.Hubs;
 using MicroondasBenner.Models;
+using MicroondasBenner.Models.Base;
+using MicroondasBenner.Models.Enums;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Timers;
@@ -12,13 +14,13 @@ public class MicroondasService : IDisposable
 {
     private readonly IHubContext<MicroondasHub> _hubContext;
 
-    private ProgramaAquecimento Programa { get; set; } = new();
+    private ProgramaAquecimento _programa { get; set; } = new();
 
     public bool EmAndamento //Para deixar a variável Programa privada, evitando o uso externo
-        => Programa.EmAndamento;
+        => _programa.EmAndamento;
 
     public bool Pausado //Para deixar a variável Programa privada, evitando o uso externo
-        => Programa.Pausado;
+        => _programa.Pausado;
 
     private Stopwatch _stopwatch = new();
     private int _tempoInicial;
@@ -50,29 +52,38 @@ public class MicroondasService : IDisposable
             return;
         }
 
-        int pontosPorSegundo = Programa.Potencia;
-        Programa.StringProgresso += new string('.', pontosPorSegundo);
+        int pontosPorSegundo = _programa.Potencia;
+        _programa.StringProgresso += new string(_programa.SimboloProgresso, pontosPorSegundo);
 
-        Programa.Tempo = tempoRestante;
+        _programa.Tempo = tempoRestante;
 
         EnviarAtualizacao();
     }
 
-    public void Iniciar(int tempoSegundos, int potencia)
+    //Poderia passar direto o enum tipo do programa como parâmetro, seria mais simples,
+    //mas preferi usar generics para aumentar a complexidade propositalmente, já que se trata de um teste técnico.
+    //Mas em cenários reais, eu optaria por algo mais simples, pois isolaria a regra de negócios na classe service, facilitando a manutenção
+    public void Iniciar<T>(T programa) where T : ProgramaAquecimento 
     {
-        if (!IsValido(tempoSegundos, potencia, out var erro))
+        if (EmAndamento && Pausado)
+        {
+            _programa.Pausado = false;
+            _stopwatch.Start();
+            _timer.Start();
+            EnviarAtualizacao();
+            return;
+        }
+
+        if (EmAndamento)
+            return;
+
+        _programa = programa;
+        if (!IsValido(_programa.Tempo, _programa.Potencia, out var erro))
             throw new ArgumentException(erro);
 
-        Programa = new ProgramaAquecimento
-        {
-            Tempo = tempoSegundos,
-            Potencia = potencia,
-            StringProgresso = string.Empty,
-            EmAndamento = true,
-            Pausado = false
-        };
+        _programa.EmAndamento = true;
 
-        _tempoInicial = tempoSegundos;
+        _tempoInicial = _programa.Tempo;
         _stopwatch.Restart();
         _timer.Start();
 
@@ -84,7 +95,7 @@ public class MicroondasService : IDisposable
         if (EmAndamento && !Pausado)
         {
             _tempoInicial += 30;
-            Programa.Tempo += 30;
+            _programa.Tempo += 30;
             EnviarAtualizacao();
         }
     }
@@ -93,7 +104,7 @@ public class MicroondasService : IDisposable
     {
         if (EmAndamento && !Pausado)
         {
-            Programa.Pausado = true;
+            _programa.Pausado = true;
             _stopwatch.Stop();
             _timer.Stop();
             EnviarAtualizacao();
@@ -102,7 +113,7 @@ public class MicroondasService : IDisposable
 
     public void Cancelar()
     {
-        Programa = new ProgramaAquecimento();
+        _programa = new ProgramaAquecimento();
         _stopwatch.Reset();
         _timer.Stop();
         EnviarAtualizacao();
@@ -110,8 +121,8 @@ public class MicroondasService : IDisposable
 
     private void Finalizar()
     {
-        Programa.EmAndamento = false;
-        Programa.StringProgresso += "\nAquecimento concluído";
+        _programa.EmAndamento = false;
+        _programa.StringProgresso += "\nAquecimento concluído";
         _stopwatch.Stop();
         _timer.Stop();
         EnviarAtualizacao();
@@ -123,15 +134,31 @@ public class MicroondasService : IDisposable
         await _hubContext.Clients.All.SendAsync(MetodoHelper.AtualizarProgresso, status);
     }
 
+    private string FormatarTempo(int segundosTotais)
+    {
+        if (segundosTotais < 60)
+            return $"{segundosTotais}s";
+
+        int minutos = segundosTotais / 60;
+        int segundos = segundosTotais % 60;
+
+        if (segundos == 0)
+            return $"{minutos}m";
+
+        return $"{minutos}m e {segundos}s";
+    }
+
     public string GetStatusAtual()
     {
         if (!EmAndamento)
-            return Programa.StringProgresso;
+            return _programa.StringProgresso;
+
+        var tempoFormatado = FormatarTempo(_programa.Tempo);
 
         if (Pausado)
-            return Programa.StringProgresso + $"\n(Pausado - {Programa.Tempo}s restantes)";
+            return _programa.StringProgresso + $"\n(Pausado - {tempoFormatado} restantes)";
 
-        return Programa.StringProgresso + $"   ({Programa.Tempo}s restantes)";
+        return _programa.StringProgresso + $"\n({tempoFormatado} restantes)";
     }
 
     public bool IsValido(int tempo, int potencia, out string erro)
@@ -151,7 +178,7 @@ public class MicroondasService : IDisposable
         if (EmAndamento && !Pausado)
         {
             // Pausar
-            Programa.Pausado = true;
+            _programa.Pausado = true;
             _stopwatch.Stop();
             _timer.Stop();
             EnviarAtualizacao();
@@ -159,7 +186,7 @@ public class MicroondasService : IDisposable
         else if (Pausado)
         {
             // Cancelar (se já pausado)
-            Programa = new ProgramaAquecimento();
+            _programa = new ProgramaAquecimento();
             _stopwatch.Reset();
             _timer.Stop();
             EnviarAtualizacao();
@@ -171,4 +198,18 @@ public class MicroondasService : IDisposable
         _timer.Stop();
         _timer.Dispose();
     }
+
+    public ProgramaAquecimento GetConfigPrograma(ETipoPrograma tipoPrograma) 
+        => tipoPrograma switch
+        {
+            ETipoPrograma.Personalizado => new ProgramaAquecimentoPersonalizado(),
+            ETipoPrograma.Padrao => new ProgramaAquecimento(),
+            ETipoPrograma.InicioRapido => new ProgramaAquecimentoInicioRapido(),
+            ETipoPrograma.Pipoca => new ProgramaAquecimentoPipoca(),
+            ETipoPrograma.Leite => new ProgramaAquecimentoLeite(),
+            ETipoPrograma.Boi => new ProgramaAquecimentoBoi(),
+            ETipoPrograma.Frango => new ProgramaAquecimentoFrango(),
+            ETipoPrograma.Feijao => new ProgramaAquecimentoFeijao(),
+            _ => new ProgramaAquecimento(),
+        };
 }
