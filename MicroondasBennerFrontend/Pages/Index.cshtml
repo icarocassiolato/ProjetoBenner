@@ -1,0 +1,264 @@
+﻿@page
+@model IndexModel
+
+<style>
+    #dvContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #dvFuncoes {
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+        #dvFuncoes button {
+            flex: 1;
+            height: 50px;
+            width: 150px;
+        }
+
+    #dvTeclado {
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        gap: 10px;
+    }
+
+    #btn0 {
+        grid-column: 2;
+    }
+</style>
+
+<div id="dvContainer">
+    <h1>Simulador de Microondas</h1>
+
+    <div>
+        <label>Tempo (segundos 1-120):</label>
+        <input type="number" id="tempo" min="1" max="120" value="30" />
+    </div>
+
+    <div>
+        <label>Potência (1-10):</label>
+        <input type="number" id="potencia" min="1" max="10" value="10" />
+    </div>
+
+    <div id="dvTeclado">
+        <button id="btn1">1</button>
+        <button id="btn2">2</button>
+        <button id="btn3">3</button>
+        <button id="btn4">4</button>
+        <button id="btn5">5</button>
+        <button id="btn6">6</button>
+        <button id="btn7">7</button>
+        <button id="btn8">8</button>
+        <button id="btn9">9</button>
+        <button id="btn0">0</button>
+    </div>
+
+    <div id="dvFuncoes">
+        <button id="btnIniciar">Iniciar</button>
+        <button id="btnPausarCancelar">Pausar / Cancelar</button>
+        <br />
+        <button id="btnInicioRapido">Início Rápido</button>
+        <button id="btnMais30">+30 segundos</button>
+    </div>
+
+    <div id="dvProgramas">
+        <label>Programas:</label>
+        <br />
+
+        <button id="btnPipoca">Pipoca</button>
+        <button id="btnLeite">Leite</button>
+        <button id="btnBoi">Carne de Boi</button>
+        <button id="btnFrango">Frango</button>
+        <button id="btnFeijao">Feijão</button>
+
+        <hr />
+
+        <strong>Programas Personalizados</strong>
+        <div id="programasPersonalizados"></div>
+    </div>
+
+    <div style="margin-top: 20px; align-self: flex-start;">
+        <strong>Progresso:</strong>
+        <pre id="progresso" style="font-size: 24px; min-height: 100px;">Aguardando...</pre>
+        <p id="mensagem" style="color: red;"></p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/microondasHub")
+            .build();
+
+        connection.on("AtualizarProgresso", (mensagem) => {
+            document.getElementById("progresso").innerText = mensagem;
+        });
+
+        connection.on("Erro", (erro) => {
+            document.getElementById("mensagem").innerText = erro;
+        });
+
+        connection.start().catch(err => console.error(err));
+
+        function adicionarNumero(numero) {
+            const input = document.getElementById("tempo");
+
+            const valorAtual = input.value ? input.value.toString() : "";
+            const novoValor = valorAtual + numero;
+
+            input.value = Number(novoValor);
+        }
+
+        let token = null;
+
+        async function login() {
+
+            try {
+
+                const response = await fetch("https://localhost:5001/Login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        Email: "teste@benner.com",
+                        Password: "123"
+                    })
+                });
+
+                if (!response.ok)
+                    throw new Error("Erro ao autenticar");
+
+                const data = await response.json();
+
+                token = data.token;
+
+                console.log("Token recebido:", token);
+
+            }
+            catch (erro) {
+
+                console.error(erro);
+                document.getElementById("mensagem").innerText = "Erro ao realizar login: " + erro;
+
+            }
+
+        }
+
+        async function carregarProgramas() {
+
+            if (!token) {
+                console.error("Token não encontrado");
+                return;
+            }
+
+            try {
+
+                const response = await fetch("https://localhost:5001/programaspersonalizados", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok)
+                {
+                    const erroApi = await response.text();
+                    throw new Error("Erro ao buscar programas: " + erroApi);
+                }
+
+                const programas = await response.json();
+
+                const container = document.getElementById("programasPersonalizados");
+
+                container.innerHTML = "";
+
+                programas.forEach(p => {
+
+                    const btn = document.createElement("button");
+
+                    btn.innerText = `${p.nome}\nInstruções: ${p.instrucoes}`;
+
+                    btn.onclick = async () => {
+
+                        await connection.invoke("Iniciar", 1, p.tempo, p.potencia);
+
+                    };
+                    container.appendChild(btn);
+                });
+            }
+            catch (erro) {
+                console.error(erro);
+                document.getElementById("mensagem").innerText = "Erro ao carregar programas: " + erro;
+            }
+        }
+
+        async function inicializarPagina() {
+
+            await login();
+
+            if (token) {
+                await carregarProgramas();
+            }
+
+        }
+
+        document.getElementById("btnIniciar").onclick = async () => {
+            const tempo = document.getElementById("tempo").value;
+            const potencia = document.getElementById("potencia").value;
+            await connection.invoke("Iniciar", 0, tempo, potencia);
+        };
+
+        document.getElementById("btnMais30").onclick = async () =>
+            await connection.invoke("Adicionar30s");
+
+        document.getElementById("btnPausarCancelar").onclick = async () =>
+            await connection.invoke("PausarOuCancelar");
+
+        document.getElementById("btnInicioRapido").onclick = async () => {
+            await connection.invoke("Iniciar", 2, "", "");
+        };
+
+        document.getElementById("btnPipoca").onclick = async () => {
+            await connection.invoke("Iniciar", 3, "", "");
+        };
+
+        document.getElementById("btnLeite").onclick = async () => {
+            await connection.invoke("Iniciar", 4, "", "");
+        };
+
+        document.getElementById("btnBoi").onclick = async () => {
+            await connection.invoke("Iniciar", 5, "", "");
+        };
+
+        document.getElementById("btnFrango").onclick = async () => {
+            await connection.invoke("Iniciar", 6, "", "");
+        };
+
+        document.getElementById("btnFeijao").onclick = async () => {
+            await connection.invoke("Iniciar", 7, "", "");
+        };
+
+        document.getElementById("btn1").onclick = () => adicionarNumero(1);
+        document.getElementById("btn2").onclick = () => adicionarNumero(2);
+        document.getElementById("btn3").onclick = () => adicionarNumero(3);
+        document.getElementById("btn4").onclick = () => adicionarNumero(4);
+        document.getElementById("btn5").onclick = () => adicionarNumero(5);
+        document.getElementById("btn6").onclick = () => adicionarNumero(6);
+        document.getElementById("btn7").onclick = () => adicionarNumero(7);
+        document.getElementById("btn8").onclick = () => adicionarNumero(8);
+        document.getElementById("btn9").onclick = () => adicionarNumero(9);
+        document.getElementById("btn0").onclick = () => adicionarNumero(0);
+
+        window.onload = inicializarPagina;
+
+    </script>
+}
