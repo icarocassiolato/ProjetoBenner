@@ -14,11 +14,39 @@
         margin-top: 10px;
     }
 
-        #dvFuncoes button {
-            flex: 1;
-            height: 50px;
-            width: 150px;
-        }
+    #dvFuncoes button {
+        flex: 1;
+        height: 50px;
+        width: 150px;
+    }
+
+    #dvProgramas {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+    }
+
+    #dvProgramas button {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    #dvProgramasPersonalizados {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 100%;
+    }
+
+    #dvProgramasPersonalizados button {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        box-sizing: border-box;
+    }
 
     #dvTeclado {
         display: grid;
@@ -65,26 +93,66 @@
         <button id="btnMais30">+30 segundos</button>
     </div>
 
-    <div id="dvProgramas">
-        <label>Programas:</label>
-        <br />
-
-        <button id="btnPipoca">Pipoca</button>
-        <button id="btnLeite">Leite</button>
-        <button id="btnBoi">Carne de Boi</button>
-        <button id="btnFrango">Frango</button>
-        <button id="btnFeijao">Feijão</button>
-
-        <hr />
-
-        <strong>Programas Personalizados</strong>
-        <div id="programasPersonalizados"></div>
-    </div>
-
     <div style="margin-top: 20px; align-self: flex-start;">
         <strong>Progresso:</strong>
         <pre id="progresso" style="font-size: 24px; min-height: 100px;">Aguardando...</pre>
         <p id="mensagem" style="color: red;"></p>
+    </div>
+
+    <div id="dvProgramas">
+        <label>Programas:</label>
+        <br />
+        <button id="btnPipoca">
+            Alimento: Pipoca (de micro-ondas)
+            <br />
+            Tempo: 3 minutos
+            <br />
+            Potência: 7
+            <br />
+            Instruções: Observar o barulho de estouros do milho, caso houver um intervalo de mais de 10 segundos entre um estouro e outro, interrompa o aquecimento.
+        </button>
+        <br />
+        <button id="btnLeite">
+            Alimento: Leite
+            <br />
+            Tempo: 5 minutos
+            <br />
+            Potência: 5
+            <br />
+            Instruções: Cuidado com aquecimento de líquidos, O choque térmico aliado ao movimento do  recipiente pode causar fervura imediata causando risco de queimaduras.
+        </button>
+        <br />
+        <button id="btnBoi">
+            Alimento: Carne em pedaço ou fatias
+            <br />
+            Tempo: 14 minutos
+            <br />
+            Potência 4
+            <br />
+            Instruções: Interrompa o processo na metade e vire o conteúdo com a parte de baixo para cima para o descongelamento uniforme.
+        </button>
+        <br />
+        <button id="btnFrango">
+            Alimento: Frango (qualquer corte)
+            <br />
+            Tempo: 8 minutos
+            <br />
+            Potência: 7
+            <br />
+            Instruções: Interrompa o processo na metade e vire o conteúdo com a parte de baixo para cima para o descongelamento uniforme.
+        </button>
+        <br />
+        <button id="btnFeijao">
+            Alimento: Feijão congelado
+            <br />
+            Tempo: 8 minutos
+            <br />
+            Potência 9
+            <br />
+            Instruções: Deixe o recipiente destampado e em casos de plástico, cuidado ao retirar o recipiente pois o mesmo pode perder resistência em altas temperaturas.
+        </button>
+        <br />
+        <div id="dvProgramasPersonalizados"></div>
     </div>
 </div>
 
@@ -177,7 +245,7 @@
 
                 const programas = await response.json();
 
-                const container = document.getElementById("programasPersonalizados");
+                const container = document.getElementById("dvProgramasPersonalizados");
 
                 container.innerHTML = "";
 
@@ -185,7 +253,7 @@
 
                     const btn = document.createElement("button");
 
-                    btn.innerHTML = `<strong>${p.nome}</strong><br/>Instruções: ${p.instrucoes}`;
+                    btn.innerHTML = `<i>Alimento: ${p.nome}<br/>Tempo: ${p.tempo}<br/>Potência: ${p.potencia}<br/>Instruções: ${p.instrucoes}</i>`;
 
                     btn.onclick = async () => {
 
