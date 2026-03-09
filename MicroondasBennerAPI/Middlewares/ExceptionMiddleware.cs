@@ -1,52 +1,65 @@
+using MicroondasBennerAPI.Repository.Contracts;
 using MicroondasBennerAPI.Utils;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MicroondasBennerAPI.Middlewares
 {
-    public class ExceptionMiddleware()
+    public class ExceptionMiddleware
     {
-        public async Task Invoke(HttpContext context)
+        private readonly RequestDelegate _next;
+
+        public ExceptionMiddleware(RequestDelegate next)
         {
-            var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-            if (contextFeature == null || contextFeature.Error == null)
-                return;
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)GetErrorCode(contextFeature.Error);
-            
-            if (contextFeature.Error is UnauthorizedAccessException || contextFeature.Error is ApplicationException)
-            {
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { erro = contextFeature.Error.Message }));
-                return;
-            }
-
-            await context.Response.WriteAsync(
-                EnvironmentUtils.IsDevelopment()
-                    ? JsonSerializer.Serialize(
-                    new ProblemDetails()
-                    {
-                        Status = context.Response.StatusCode,
-                        Title = DateTime.Now.ToString() + " - " + contextFeature.Error.Message,
-                        Detail = contextFeature.Error.StackTrace
-                    })
-                    : "Erro Desconhecido. Comunique o suporte");
+            _next = next;
         }
 
-        private static HttpStatusCode GetErrorCode(Exception e) 
+        public async Task InvokeAsync(HttpContext context)
+        {
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+                await HandleException(context, ex);
+            }
+        }
+
+        private async Task HandleException(HttpContext context, Exception exception)
+        {
+            var erroRepository = context.RequestServices.GetRequiredService<IErroRepository>();
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)GetErrorCode(exception);
+
+            var problem = new ProblemDetails
+            {
+                Status = context.Response.StatusCode,
+                Title = DateTime.Now + " - " + exception.Message,
+                Detail = EnvironmentUtils.IsDevelopment() ? exception.StackTrace : null
+            };
+
+            var erroSerializado = JsonSerializer.Serialize(problem);
+            await context.Response.WriteAsync(erroSerializado);
+
+            await erroRepository.InsertAsync(erroSerializado);
+        }
+
+        private static HttpStatusCode GetErrorCode(Exception e)
             => e switch
             {
-                ValidationException _ => HttpStatusCode.BadRequest,
-                FormatException _ => HttpStatusCode.BadRequest,
-                AuthenticationException _ => HttpStatusCode.Forbidden,
-                NotImplementedException _ => HttpStatusCode.NotImplemented,
-                ApplicationException _ => HttpStatusCode.BadRequest,
-                UnauthorizedAccessException _ => HttpStatusCode.Unauthorized,
-                _ => HttpStatusCode.InternalServerError,
+                ValidationException => HttpStatusCode.BadRequest,
+                FormatException => HttpStatusCode.BadRequest,
+                AuthenticationException => HttpStatusCode.Forbidden,
+                NotImplementedException => HttpStatusCode.NotImplemented,
+                ApplicationException => HttpStatusCode.BadRequest,
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                _ => HttpStatusCode.InternalServerError
             };
     }
 }

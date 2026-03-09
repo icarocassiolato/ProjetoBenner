@@ -18,6 +18,7 @@ var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 var key = Encoding.ASCII.GetBytes(jwtKey);
 
 builder.Services.AddScoped<IConnectionFactory, ConnectionFactory>();
+builder.Services.AddScoped<IErroRepository, ErroRepository>();
 builder.Services.AddScoped<IProgramasPersonalizadosRepository, ProgramasPersonalizadosRepository>();
 builder.Services.AddScoped<IProgramasPersonalizadosService, ProgramasPersonalizadosService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -67,17 +68,12 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseExceptionHandler(
-    new ExceptionHandlerOptions
-    {
-        ExceptionHandler = new ExceptionMiddleware().Invoke
-    }
-);
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
