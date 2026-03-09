@@ -74,8 +74,11 @@ public class MicroondasService : IDisposable
             return;
         }
 
-        if (EmAndamento)
+        if (EmAndamento && !Pausado)
+        {
+            Adicionar30Segundos();
             return;
+        }
 
         _programa = programa;
         if (!IsValido(_programa.Tempo, _programa.Potencia, out var erro))
@@ -92,23 +95,26 @@ public class MicroondasService : IDisposable
 
     public void Adicionar30Segundos()
     {
-        if (EmAndamento && !Pausado)
-        {
-            _tempoInicial += 30;
-            _programa.Tempo += 30;
-            EnviarAtualizacao();
-        }
+        if (!EmAndamento 
+            || Pausado 
+            || _programa.Tempo > 90 
+            || (_programa.TipoPrograma is not ETipoPrograma.Personalizado or ETipoPrograma.Padrao))
+            return;
+
+        _tempoInicial += 30;
+        _programa.Tempo += 30;
+        EnviarAtualizacao();
     }
 
     public void Pausar()
     {
-        if (EmAndamento && !Pausado)
-        {
-            _programa.Pausado = true;
-            _stopwatch.Stop();
-            _timer.Stop();
-            EnviarAtualizacao();
-        }
+        if (!EmAndamento || Pausado)
+            return;
+
+        _programa.Pausado = true;
+        _stopwatch.Stop();
+        _timer.Stop();
+        EnviarAtualizacao();
     }
 
     public void Cancelar()
