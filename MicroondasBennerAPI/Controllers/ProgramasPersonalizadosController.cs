@@ -30,6 +30,17 @@ namespace MicroondasBennerAPI.Controllers
             return Ok(programa);
         }
 
+        [HttpGet("Usuario/{id}")]
+        public async Task<ActionResult<IEnumerable<ProgramaAquecimento>>> GetByUserId(int id)
+        {
+            var programa = await _programasPersonalizadosService.GetByUserIdAsync(id);
+
+            if (programa == null)
+                return NotFound();
+
+            return Ok(programa);
+        }
+
         [HttpPost]
         public async Task<ActionResult<int>> Insert([FromBody] ProgramaAquecimento programa)
         {

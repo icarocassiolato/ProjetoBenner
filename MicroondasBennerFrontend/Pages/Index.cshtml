@@ -63,13 +63,10 @@
     <h1>Simulador de Microondas</h1>
 
     <div id="dvTopo">
-        <button onclick="window.location.href='/Usuario'">
-            Cadastro de Usuários
-        </button>
-
         <button onclick="window.location.href='/ProgramaPersonalizado'">
             Programas Personalizados
         </button>
+        <button onclick="logout()">Sair</button>
     </div>
 
     <div>
@@ -171,6 +168,14 @@
 
     <script>
 
+        const token = localStorage.getItem("token");
+
+        if(!token){
+            window.location.href = "/Login";
+        }
+
+        var userId = getUserIdFromToken();
+
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/microondasHub")
             .build();
@@ -202,32 +207,19 @@
             input.value = Number(novoValor);
         }
 
-        let token = null;
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
 
-        async function login() {
+            if (!token)
+                return null;
 
             try {
-                const response = await fetch("https://localhost:5001/Login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        Email: "teste@benner.com",
-                        Password: "123"
-                    })
-                });
-
-                if (!response.ok)
-                    throw new Error("Erro ao autenticar");
-
-                const data = await response.json();
-                token = data.token;
-                console.log("Token recebido:", token);
+                const payload = token.split('.')[1];
+                const decoded = JSON.parse(atob(payload));
+                return decoded.nameid;
             }
-            catch (erro) {
-                console.error(erro);
-                document.getElementById("mensagem").innerText = "Erro ao realizar login: " + erro;
+            catch {
+                return null;
             }
         }
 
@@ -239,7 +231,7 @@
             }
 
             try {
-                const response = await fetch("https://localhost:5001/programaspersonalizados", {
+                const response = await fetch(`https://localhost:5001/programaspersonalizados/Usuario/${userId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -287,8 +279,12 @@
 
         async function inicializarPagina() {
             await iniciarSignalR();
-            await login();
             await carregarProgramas();
+        }
+
+        function logout(){
+            localStorage.removeItem("token");
+            window.location.href = "/Login";
         }
 
         document.getElementById("btnIniciar").onclick = async () => {

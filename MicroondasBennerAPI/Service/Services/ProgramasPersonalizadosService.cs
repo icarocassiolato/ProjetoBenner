@@ -17,6 +17,9 @@ namespace MicroondasBennerAPI.Service.Services
         public async Task<ProgramaAquecimento?> GetByIdAsync(int id)
             => await _programasPersonalizadosRepository.GetByIdAsync(id);
 
+        public async Task<IEnumerable<ProgramaAquecimento?>> GetByUserIdAsync(int id)
+            => await _programasPersonalizadosRepository.GetByUserIdAsync(id);
+
         public async Task<int> InsertAsync(ProgramaAquecimento programa)
             => await _programasPersonalizadosRepository.InsertAsync(programa);
 

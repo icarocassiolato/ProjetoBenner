@@ -27,6 +27,15 @@ namespace MicroondasBennerAPI.Repository.Repositories
             return await connection.QueryFirstOrDefaultAsync<ProgramaAquecimento>(sql, new { id });
         }
 
+        public async Task<IEnumerable<ProgramaAquecimento?>> GetByUserIdAsync(int id)
+        {
+            using var connection = _connectionFactory.Connection();
+
+            var sql = "SELECT * FROM ProgramaPersonalizado WHERE IdUsuario = @Id";
+
+            return await connection.QueryAsync<ProgramaAquecimento>(sql, new { id });
+        }
+
         public async Task<int> InsertAsync(ProgramaAquecimento programa)
         {
             using var connection = _connectionFactory.Connection();

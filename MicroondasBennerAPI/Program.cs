@@ -23,6 +23,7 @@ builder.Services.AddScoped<IProgramasPersonalizadosRepository, ProgramasPersonal
 builder.Services.AddScoped<IProgramasPersonalizadosService, ProgramasPersonalizadosService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 
 builder.Services.AddControllers();

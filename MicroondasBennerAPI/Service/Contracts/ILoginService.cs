@@ -1,7 +1,9 @@
-﻿namespace MicroondasBennerAPI.Service.Contracts
+﻿using MicroondasBennerCommon.Models;
+
+namespace MicroondasBennerAPI.Service.Contracts
 {
     public interface ILoginService
     {
-        string GerarToken(string username);
+        Task<string> UsuarioExiste(Usuario usuario);
     }
 }
