@@ -1,7 +1,7 @@
 using MicroondasBenner.Helpers;
 using MicroondasBenner.Hubs;
-using MicroondasBenner.Models.Enums;
-using MicroondasBennerCommom.Models;
+using MicroondasBennerCommon.Enums;
+using MicroondasBennerCommon.Models;
 using MicroondasBennerFrontend.Models;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;

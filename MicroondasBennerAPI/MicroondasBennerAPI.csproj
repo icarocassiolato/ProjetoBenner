@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MicroondasBennerCommom\MicroondasBennerCommom.csproj" />
+    <ProjectReference Include="..\MicroondasBennerCommom\MicroondasBennerCommon.csproj" />
   </ItemGroup>
 
 </Project>

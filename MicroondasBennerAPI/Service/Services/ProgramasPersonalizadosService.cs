@@ -1,6 +1,6 @@
 ﻿using MicroondasBennerAPI.Repository.Contracts;
 using MicroondasBennerAPI.Service.Contracts;
-using MicroondasBennerCommom.Models;
+using MicroondasBennerCommon.Models;
 
 namespace MicroondasBennerAPI.Service.Services
 {

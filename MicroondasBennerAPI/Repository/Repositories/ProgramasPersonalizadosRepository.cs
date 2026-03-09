@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using MicroondasBennerAPI.Connection.Contracts;
 using MicroondasBennerAPI.Repository.Contracts;
-using MicroondasBennerCommom.Models;
+using MicroondasBennerCommon.Models;
 
 namespace MicroondasBennerAPI.Repository.Repositories
 {

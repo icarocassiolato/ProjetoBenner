@@ -1,4 +1,4 @@
-﻿using MicroondasBennerCommom.Models;
+﻿using MicroondasBennerCommon.Models;
 
 namespace MicroondasBennerAPI.Repository.Contracts
 {

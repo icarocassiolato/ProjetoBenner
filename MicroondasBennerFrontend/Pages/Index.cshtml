@@ -105,7 +105,15 @@
             document.getElementById("mensagem").innerText = erro;
         });
 
-        connection.start().catch(err => console.error(err));
+        async function iniciarSignalR() {
+            try {
+                await connection.start();
+                console.log("SignalR conectado");
+            }
+            catch (erro) {
+                console.error("Erro ao conectar SignalR:", erro);
+            }
+        }
 
         function adicionarNumero(numero) {
             const input = document.getElementById("tempo");
@@ -121,7 +129,6 @@
         async function login() {
 
             try {
-
                 const response = await fetch("https://localhost:5001/Login", {
                     method: "POST",
                     headers: {
@@ -137,19 +144,13 @@
                     throw new Error("Erro ao autenticar");
 
                 const data = await response.json();
-
                 token = data.token;
-
                 console.log("Token recebido:", token);
-
             }
             catch (erro) {
-
                 console.error(erro);
                 document.getElementById("mensagem").innerText = "Erro ao realizar login: " + erro;
-
             }
-
         }
 
         async function carregarProgramas() {
@@ -160,7 +161,6 @@
             }
 
             try {
-
                 const response = await fetch("https://localhost:5001/programaspersonalizados", {
                     method: "GET",
                     headers: {
@@ -185,12 +185,18 @@
 
                     const btn = document.createElement("button");
 
-                    btn.innerText = `${p.nome}\nInstruções: ${p.instrucoes}`;
+                    btn.innerHTML = `<strong>${p.nome}</strong><br/>Instruções: ${p.instrucoes}`;
 
                     btn.onclick = async () => {
 
-                        await connection.invoke("Iniciar", 1, p.tempo, p.potencia);
-
+                        try {
+                            console.log("Executando programa:", p);
+                            await connection.invoke("Iniciar", 0, p.tempo.toString(), p.potencia.toString());
+                        }
+                        catch (erro) {
+                            console.error("Erro ao iniciar programa:", erro);
+                            document.getElementById("mensagem").innerText = "Erro ao iniciar programa";
+                        }
                     };
                     container.appendChild(btn);
                 });
@@ -202,13 +208,9 @@
         }
 
         async function inicializarPagina() {
-
+            await iniciarSignalR();
             await login();
-
-            if (token) {
-                await carregarProgramas();
-            }
-
+            await carregarProgramas();
         }
 
         document.getElementById("btnIniciar").onclick = async () => {
@@ -223,29 +225,23 @@
         document.getElementById("btnPausarCancelar").onclick = async () =>
             await connection.invoke("PausarOuCancelar");
 
-        document.getElementById("btnInicioRapido").onclick = async () => {
+        document.getElementById("btnInicioRapido").onclick = async () =>
             await connection.invoke("Iniciar", 2, "", "");
-        };
 
-        document.getElementById("btnPipoca").onclick = async () => {
+        document.getElementById("btnPipoca").onclick = async () =>
             await connection.invoke("Iniciar", 3, "", "");
-        };
 
-        document.getElementById("btnLeite").onclick = async () => {
+        document.getElementById("btnLeite").onclick = async () =>
             await connection.invoke("Iniciar", 4, "", "");
-        };
 
-        document.getElementById("btnBoi").onclick = async () => {
+        document.getElementById("btnBoi").onclick = async () =>
             await connection.invoke("Iniciar", 5, "", "");
-        };
 
-        document.getElementById("btnFrango").onclick = async () => {
+        document.getElementById("btnFrango").onclick = async () =>
             await connection.invoke("Iniciar", 6, "", "");
-        };
 
-        document.getElementById("btnFeijao").onclick = async () => {
+        document.getElementById("btnFeijao").onclick = async () =>
             await connection.invoke("Iniciar", 7, "", "");
-        };
 
         document.getElementById("btn1").onclick = () => adicionarNumero(1);
         document.getElementById("btn2").onclick = () => adicionarNumero(2);
@@ -259,6 +255,5 @@
         document.getElementById("btn0").onclick = () => adicionarNumero(0);
 
         window.onload = inicializarPagina;
-
     </script>
 }
