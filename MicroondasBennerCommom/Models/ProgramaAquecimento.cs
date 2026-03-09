@@ -5,6 +5,7 @@ namespace MicroondasBennerCommon.Models
     public class ProgramaAquecimento
     {
         public int Id { get; set; }
+        public int IdUsuario { get; set; }
         public string Nome { get; set; } = string.Empty;
         public int Tempo { get; set; } = 30;
         public int Potencia { get; set; } = 10;

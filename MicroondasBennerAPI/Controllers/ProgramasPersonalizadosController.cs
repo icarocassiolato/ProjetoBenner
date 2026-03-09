@@ -2,6 +2,7 @@ using MicroondasBennerAPI.Service.Contracts;
 using MicroondasBennerCommon.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MicroondasBennerAPI.Controllers
 {
@@ -44,6 +45,8 @@ namespace MicroondasBennerAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Insert([FromBody] ProgramaAquecimento programa)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            programa.IdUsuario = int.Parse(userId!);
             var id = await _programasPersonalizadosService.InsertAsync(programa);
 
             return CreatedAtAction(

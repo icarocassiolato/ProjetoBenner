@@ -47,7 +47,8 @@ namespace MicroondasBennerAPI.Repository.Repositories
             Potencia,
             Nome,
             SimboloProgresso,
-            Instrucoes
+            Instrucoes,
+            IdUsuario
         )
         VALUES
         (
@@ -55,7 +56,8 @@ namespace MicroondasBennerAPI.Repository.Repositories
             @Potencia,
             @Nome,
             @SimboloProgresso,
-            @Instrucoes
+            @Instrucoes,
+            @IdUsuario
         );
 
         SELECT CAST(SCOPE_IDENTITY() AS INT);";
