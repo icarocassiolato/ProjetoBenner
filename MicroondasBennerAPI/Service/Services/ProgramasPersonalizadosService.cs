@@ -8,19 +8,19 @@ namespace MicroondasBennerAPI.Service.Services
     {
         private readonly IProgramasPersonalizadosRepository _programasPersonalizadosRepository = programasPersonalizadosRepository;
 
-        public Task<bool> DeleteAsync(int id)
-            => _programasPersonalizadosRepository.DeleteAsync(id);
+        public async Task<bool> DeleteAsync(int id)
+            => await _programasPersonalizadosRepository.DeleteAsync(id);
 
-        public Task<IEnumerable<ProgramaAquecimento>> GetAllAsync()
-            => _programasPersonalizadosRepository.GetAllAsync();
+        public async Task<IEnumerable<ProgramaAquecimento>> GetAllAsync()
+            => await _programasPersonalizadosRepository.GetAllAsync();
 
-        public Task<ProgramaAquecimento?> GetByIdAsync(int id)
-            => _programasPersonalizadosRepository.GetByIdAsync(id);
+        public async Task<ProgramaAquecimento?> GetByIdAsync(int id)
+            => await _programasPersonalizadosRepository.GetByIdAsync(id);
 
-        public Task<int> InsertAsync(ProgramaAquecimento programa)
-            => _programasPersonalizadosRepository.InsertAsync(programa);
+        public async Task<int> InsertAsync(ProgramaAquecimento programa)
+            => await _programasPersonalizadosRepository.InsertAsync(programa);
 
-        public Task<bool> UpdateAsync(ProgramaAquecimento programa)
-            => _programasPersonalizadosRepository.UpdateAsync(programa);
+        public async Task<bool> UpdateAsync(ProgramaAquecimento programa)
+            => await _programasPersonalizadosRepository.UpdateAsync(programa);
     }
 }

@@ -20,6 +20,8 @@ var key = Encoding.ASCII.GetBytes(jwtKey);
 builder.Services.AddScoped<IConnectionFactory, ConnectionFactory>();
 builder.Services.AddScoped<IProgramasPersonalizadosRepository, ProgramasPersonalizadosRepository>();
 builder.Services.AddScoped<IProgramasPersonalizadosService, ProgramasPersonalizadosService>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 
 builder.Services.AddControllers();
