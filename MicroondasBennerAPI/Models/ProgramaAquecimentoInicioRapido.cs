@@ -1,7 +1,7 @@
-﻿using MicroondasBennerCommon.Enums;
-using MicroondasBennerCommon.Models.Base;
+﻿using MicroondasBennerAPI.Models.Enums;
+using MicroondasBennerAPI.Models.Base;
 
-namespace MicroondasBennerCommon.Models
+namespace MicroondasBennerAPI.Models
 {
     public class ProgramaAquecimentoInicioRapido : ProgramaAquecimento
     {

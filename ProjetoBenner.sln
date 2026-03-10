@@ -1,10 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.2.11430.68 d18.0
+VisualStudioVersion = 18.2.11430.68
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerFrontend", "MicroondasBennerFrontend\MicroondasBennerFrontend.csproj", "{939B4F90-0275-B7DD-BEDC-EF34324A25DC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerCommon", "MicroondasBennerCommom\MicroondasBennerCommon.csproj", "{E4E86FC2-25AA-B2ED-FD79-4DB73ED9FDC1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerAPI", "MicroondasBennerAPI\MicroondasBennerAPI.csproj", "{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}"
 EndProject
@@ -18,10 +16,6 @@ Global
 		{939B4F90-0275-B7DD-BEDC-EF34324A25DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{939B4F90-0275-B7DD-BEDC-EF34324A25DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{939B4F90-0275-B7DD-BEDC-EF34324A25DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4E86FC2-25AA-B2ED-FD79-4DB73ED9FDC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4E86FC2-25AA-B2ED-FD79-4DB73ED9FDC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4E86FC2-25AA-B2ED-FD79-4DB73ED9FDC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4E86FC2-25AA-B2ED-FD79-4DB73ED9FDC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU

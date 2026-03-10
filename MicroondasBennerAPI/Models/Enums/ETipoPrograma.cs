@@ -1,4 +1,4 @@
-﻿namespace MicroondasBennerCommon.Enums
+﻿namespace MicroondasBennerAPI.Models.Enums
 {
     public enum ETipoPrograma
     {

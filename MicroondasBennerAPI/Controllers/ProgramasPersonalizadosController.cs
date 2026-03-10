@@ -1,5 +1,5 @@
+using MicroondasBennerAPI.Models.Base;
 using MicroondasBennerAPI.Service.Contracts;
-using MicroondasBennerCommon.Models.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

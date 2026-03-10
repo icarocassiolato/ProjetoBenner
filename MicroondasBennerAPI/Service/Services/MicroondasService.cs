@@ -1,8 +1,8 @@
 using MicroondasBennerAPI.Helpers;
 using MicroondasBennerAPI.Hubs;
-using MicroondasBennerCommon.Enums;
-using MicroondasBennerCommon.Models;
-using MicroondasBennerCommon.Models.Base;
+using MicroondasBennerAPI.Models.Enums;
+using MicroondasBennerAPI.Models;
+using MicroondasBennerAPI.Models.Base;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 

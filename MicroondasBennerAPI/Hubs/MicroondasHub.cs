@@ -1,6 +1,6 @@
 ﻿using MicroondasBennerAPI.Helpers;
+using MicroondasBennerAPI.Models.Enums;
 using MicroondasBennerAPI.Service.Services;
-using MicroondasBennerCommon.Enums;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MicroondasBennerAPI.Hubs;

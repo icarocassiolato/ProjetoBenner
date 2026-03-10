@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="../MicroondasBennerCommom/MicroondasBennerCommom.csproj" />
-  <Project Path="MicroondasBennerAPI.csproj" />
-</Solution>
