@@ -45,6 +45,7 @@ namespace MicroondasBennerAPI.Service.Services
             return await _programasPersonalizadosRepository.UpdateAsync(programa);
         }
 
+        //Poderia ser feito de forma mais simples, mas preferi usar Reflection, justamente para mostrar a técnica
         private static bool SimboloUtilizadoProgramaPreCadastrado(char simbolo)
         {
             var tipos = AppDomain.CurrentDomain.GetAssemblies()

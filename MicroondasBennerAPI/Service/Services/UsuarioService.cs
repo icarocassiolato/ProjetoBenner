@@ -20,12 +20,25 @@ namespace MicroondasBennerAPI.Service.Services
 
         public async Task<int> InsertAsync(Usuario usuario)
         {
+            ValidarCamposVazios(usuario);
+
             usuario.Senha = HashUtils.GerarSha1(usuario.Senha);
             return await _usuarioRepository.InsertAsync(usuario);
         }
 
+        private static void ValidarCamposVazios(Usuario usuario)
+        {
+            if (string.IsNullOrEmpty(usuario.Nome))
+                throw new ApplicationException("O nome é obrigatório.");
+
+            if (string.IsNullOrEmpty(usuario.Senha))
+                throw new ApplicationException("A senha é obrigatória.");
+        }
+
         public async Task<bool> UpdateAsync(Usuario usuario)
         {
+            ValidarCamposVazios(usuario);
+
             usuario.Senha = HashUtils.GerarSha1(usuario.Senha);
             return await _usuarioRepository.UpdateAsync(usuario);
         }

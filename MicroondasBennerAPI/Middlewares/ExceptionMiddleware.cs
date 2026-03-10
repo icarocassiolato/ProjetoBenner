@@ -39,7 +39,7 @@ namespace MicroondasBennerAPI.Middlewares
             };
 
             var erroSerializado = JsonSerializer.Serialize(problem);
-            await context.Response.WriteAsync(problem.Title);
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { message = problem.Title }));
 
             await erroRepository.InsertAsync(erroSerializado);
         }

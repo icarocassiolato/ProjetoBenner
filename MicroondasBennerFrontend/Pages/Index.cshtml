@@ -231,21 +231,7 @@
             }
 
             try {
-                const response = await fetch(`https://localhost:5001/programaspersonalizados/Usuario/${userId}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (!response.ok)
-                {
-                    const erroApi = await response.text();
-                    throw new Error("Erro ao buscar programas: " + erroApi);
-                }
-
-                const programas = await response.json();
+                const programas = await sendRequest(`programaspersonalizados/Usuario/${userId}`, "GET");
 
                 const container = document.getElementById("dvProgramasPersonalizados");
 

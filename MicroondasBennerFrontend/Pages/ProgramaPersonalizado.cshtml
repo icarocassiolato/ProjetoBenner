@@ -43,7 +43,7 @@
             <th>Tempo</th>
             <th>Potência</th>
             <th>Instruções</th>
-            <th>Símbolo progresso</th>
+            <th>Símbolo</th>
         </tr>
     </thead>
 
@@ -62,13 +62,7 @@
 
     async function carregarProgramas() {
 
-        const response = await fetch("https://localhost:5001/programaspersonalizados", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        const programas = await response.json();
+        const programas = await sendRequest("programaspersonalizados", "GET");
 
         const tabela = document.getElementById("listaProgramas");
         tabela.innerHTML = "";
@@ -133,35 +127,16 @@
 
         if(editandoId){
             programa.id = editandoId;
-
-            response = await fetch(`https://localhost:5001/programaspersonalizados/${editandoId}`,{
-                method:"PUT",
-                headers:{
-                    "Authorization":`Bearer ${token}`,
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify(programa)
-            });
+            
+            response = await sendRequest(`programaspersonalizados/${editandoId}`, "PUT", programa);
 
             editandoId = null;
-        }else{
-            response = await fetch("https://localhost:5001/programaspersonalizados",{
-                method:"POST",
-                headers:{
-                    "Authorization":`Bearer ${token}`,
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify(programa)
-            });
+        } else {
+            response = await sendRequest(`programaspersonalizados`, "POST", programa);
         }
 
-        if(!response.ok) {
-            console.log("errooooooooooooooo");
-            const erro = await response.text();
-            console.log(erro);
-            alert(erro);
-            console.log(erro);
-            console.log("errooooooooooooooo2222");
+        if (!response) {
+            alert("Erro ao salvar programa");
             return;
         }
 
@@ -174,12 +149,7 @@
         if(!confirm("Excluir programa?"))
             return;
 
-        await fetch(`https://localhost:5001/programaspersonalizados/${id}`,{
-            method:"DELETE",
-            headers:{
-                "Authorization":`Bearer ${token}`
-            }
-        });
+        await sendRequest(`programaspersonalizados/${id}`, "DELETE");
 
         carregarProgramas();
     }

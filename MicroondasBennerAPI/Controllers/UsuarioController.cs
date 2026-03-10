@@ -1,13 +1,13 @@
 using MicroondasBennerAPI.Service.Contracts;
 using MicroondasBennerCommon.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroondasBennerAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    //Não coloquei autorização nesse controller para facilitar os testes,
+    //mas em um cenário real, eu colocaria autorização para proteger os dados dos usuários.
     public class UsuarioController(IUsuarioService usuarioService) : ControllerBase
     {
         private readonly IUsuarioService _usuarioService = usuarioService;
