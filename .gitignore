@@ -9,3 +9,7 @@ MicroondasBenner/obj
 /MicroondasBennerCommom/obj
 /MicroondasBennerFrontend/bin/Debug/net10.0
 /MicroondasBennerFrontend/obj
+/MicroondasBennerAPI.Tests/bin/Debug/net10.0
+/MicroondasBennerAPI.Tests/obj
+/MicroondasBennerFrontend.Tests/bin/Debug/net10.0
+/MicroondasBennerFrontend.Tests/obj
