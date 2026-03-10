@@ -15,7 +15,7 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? string.Empty;
 var key = Encoding.ASCII.GetBytes(jwtKey);
 
 builder.Services.AddScoped<IConnectionFactory, ConnectionFactory>();

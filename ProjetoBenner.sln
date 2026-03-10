@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerFrontend", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerAPI", "MicroondasBennerAPI\MicroondasBennerAPI.csproj", "{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerAPI.Tests", "MicroondasBennerAPI.Tests\MicroondasBennerAPI.Tests.csproj", "{57FADC3B-D665-4A8D-B433-5CA59D4BA31F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroondasBennerFrontend.Tests", "MicroondasBennerFrontend.Tests\MicroondasBennerFrontend.Tests.csproj", "{4241A01B-E573-4BF2-AB39-BA8ABAC84503}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ED4E572-3378-5B38-3231-7A1B2EC76FCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57FADC3B-D665-4A8D-B433-5CA59D4BA31F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57FADC3B-D665-4A8D-B433-5CA59D4BA31F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57FADC3B-D665-4A8D-B433-5CA59D4BA31F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57FADC3B-D665-4A8D-B433-5CA59D4BA31F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4241A01B-E573-4BF2-AB39-BA8ABAC84503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4241A01B-E573-4BF2-AB39-BA8ABAC84503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4241A01B-E573-4BF2-AB39-BA8ABAC84503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4241A01B-E573-4BF2-AB39-BA8ABAC84503}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
