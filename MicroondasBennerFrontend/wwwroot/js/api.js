@@ -1,4 +1,4 @@
-﻿const API_URL = "https://localhost:5001";
+﻿window.API_URL = "https://localhost:5001";
 
 async function sendRequest(endpoint, method, body = null, authRequired = true) {
     const token = localStorage.getItem("token");
@@ -19,7 +19,8 @@ async function sendRequest(endpoint, method, body = null, authRequired = true) {
         const response = await fetch(`${API_URL}/${endpoint}`, {
             method: method,
             headers: headers,
-            body: fetchBody
+            body: fetchBody,
+            credentials: "include"
         });
 
         let data = {};

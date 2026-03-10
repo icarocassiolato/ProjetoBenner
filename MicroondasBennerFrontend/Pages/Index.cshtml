@@ -1,5 +1,17 @@
 ﻿@page
+@using MicroondasBennerFrontend.Pages
 @model IndexModel
+
+<head>
+    <script>
+        (function() {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "/Login";
+            }
+        })();
+    </script>
+</head>
 
 <style>
     #dvContainer {
@@ -165,19 +177,14 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-
     <script>
-
         const token = localStorage.getItem("token");
 
-        if(!token){
-            window.location.href = "/Login";
-        }
-
-        var userId = getUserIdFromToken();
-
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/microondasHub")
+            .withUrl(window.API_URL + "/microondasHub", {
+                accessTokenFactory: () => token
+            })
+            .withAutomaticReconnect()
             .build();
 
         connection.on("AtualizarProgresso", (mensagem) => {
@@ -191,9 +198,8 @@
         async function iniciarSignalR() {
             try {
                 await connection.start();
-                console.log("SignalR conectado");
-            }
-            catch (erro) {
+                console.log("SignalR conectado ao " + window.API_URL);
+            } catch (erro) {
                 console.error("Erro ao conectar SignalR:", erro);
             }
         }
@@ -231,6 +237,7 @@
             }
 
             try {
+                let userId = getUserIdFromToken();
                 const programas = await sendRequest(`programaspersonalizados/Usuario/${userId}`, "GET");
 
                 const container = document.getElementById("dvProgramasPersonalizados");
@@ -238,11 +245,8 @@
                 container.innerHTML = "";
 
                 programas.forEach(p => {
-
                     const btn = document.createElement("button");
-
                     btn.innerHTML = `<i>Alimento: ${p.nome}<br/>Tempo: ${p.tempo}<br/>Potência: ${p.potencia}<br/>Instruções: ${p.instrucoes}</i>`;
-
                     btn.onclick = async () => {
 
                         try {

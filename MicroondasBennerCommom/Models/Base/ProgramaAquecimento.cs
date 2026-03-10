@@ -13,7 +13,7 @@ namespace MicroondasBennerCommon.Models.Base
         public bool EmAndamento { get; set; } = false;
         public bool Pausado { get; set; } = false;
         public ETipoPrograma TipoPrograma { get; set; } = ETipoPrograma.Padrao;
-        public char SimboloProgresso { get; set; } = '.'; //Não declarei como char por causa da incompatibilidade quando o javascript manda para o backend
+        public char SimboloProgresso { get; set; } = '.';
         public string Instrucoes { get; set; } = string.Empty;
     }
 }

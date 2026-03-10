@@ -1,10 +1,9 @@
-﻿using MicroondasBenner.Helpers;
+﻿using MicroondasBennerAPI.Helpers;
+using MicroondasBennerAPI.Service.Services;
 using MicroondasBennerCommon.Enums;
-using MicroondasBennerFrontend.Models;
-using MicroondasBennerFrontend.Services;
 using Microsoft.AspNetCore.SignalR;
 
-namespace MicroondasBenner.Hubs;
+namespace MicroondasBennerAPI.Hubs;
 
 //Não precisaria dessa classe se o timer fosse implementado dentro do MicroondasService, mas assim fica mais organizado e desacoplado
 //Usei SignalR para comunicação em tempo real, mas poderia ser feito com polling ou Server-Sent Events

@@ -1,4 +1,4 @@
-﻿namespace MicroondasBenner.Helpers
+﻿namespace MicroondasBennerAPI.Helpers
 {
     //Classe com constantes para evitar erros de digitação no caso de reutilização
     public static class MetodoHelper

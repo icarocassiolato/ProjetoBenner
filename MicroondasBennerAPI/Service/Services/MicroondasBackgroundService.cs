@@ -1,10 +1,9 @@
-﻿using MicroondasBenner.Helpers;
-using MicroondasBenner.Hubs;
-using MicroondasBennerFrontend.Services;
+﻿using MicroondasBennerAPI.Helpers;
+using MicroondasBennerAPI.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Timer = System.Timers.Timer;
 
-namespace MicroondasBenner.Services;
+namespace MicroondasBennerAPI.Service.Services;
 
 public class MicroondasBackgroundService : BackgroundService, IDisposable
 {

@@ -80,7 +80,7 @@
         if(editandoId){
             usuario.id = editandoId;
 
-            await sendRequest("usuario", "PUT", usuario);
+            await sendRequest(`usuario/${editandoId}`, "PUT", usuario);
 
             editandoId = null;
 
