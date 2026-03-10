@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using MicroondasBennerAPI.Connection.Contracts;
 using MicroondasBennerAPI.Repository.Contracts;
-using MicroondasBennerCommon.Models;
+using MicroondasBennerCommon.Models.Base;
 
 namespace MicroondasBennerAPI.Repository.Repositories
 {
@@ -93,6 +93,17 @@ namespace MicroondasBennerAPI.Repository.Repositories
             var rows = await connection.ExecuteAsync(sql, new { id });
 
             return rows > 0;
+        }
+
+        public async Task<bool> SimboloUtilizadoProgramaPersonalizadoAsync(char simbolo)
+        {
+            using var connection = _connectionFactory.Connection();
+
+            var sql = @"SELECT 1 
+                FROM ProgramaPersonalizado 
+                WHERE SimboloProgresso = @simbolo";
+
+            return (await connection.QueryAsync(sql, new { simbolo })).Any();
         }
     }
 }

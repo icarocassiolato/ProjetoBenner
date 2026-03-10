@@ -1,5 +1,5 @@
 ﻿using MicroondasBennerCommon.Enums;
-using MicroondasBennerCommon.Models;
+using MicroondasBennerCommon.Models.Base;
 
 namespace MicroondasBennerFrontend.Models
 {

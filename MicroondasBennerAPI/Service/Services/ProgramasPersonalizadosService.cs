@@ -1,6 +1,7 @@
 ﻿using MicroondasBennerAPI.Repository.Contracts;
+using MicroondasBennerAPI.Repository.Repositories;
 using MicroondasBennerAPI.Service.Contracts;
-using MicroondasBennerCommon.Models;
+using MicroondasBennerCommon.Models.Base;
 
 namespace MicroondasBennerAPI.Service.Services
 {
@@ -21,9 +22,54 @@ namespace MicroondasBennerAPI.Service.Services
             => await _programasPersonalizadosRepository.GetByUserIdAsync(id);
 
         public async Task<int> InsertAsync(ProgramaAquecimento programa)
-            => await _programasPersonalizadosRepository.InsertAsync(programa);
+        {
+            await ValidarSimboloJaExiste(programa.SimboloProgresso);
+
+            return await _programasPersonalizadosRepository.InsertAsync(programa);
+        }
+
+        private async Task ValidarSimboloJaExiste(char simboloProgresso)
+        {
+            if (SimboloUtilizadoProgramaPreCadastrado(simboloProgresso)
+                || await SimboloUtilizadoProgramaPersonalizadoAsync(simboloProgresso))
+                    throw new ApplicationException("Símbolo já utilizado.");
+        }
+
+        private async Task<bool> SimboloUtilizadoProgramaPersonalizadoAsync(char simbolo)
+            => await _programasPersonalizadosRepository.SimboloUtilizadoProgramaPersonalizadoAsync(simbolo);
 
         public async Task<bool> UpdateAsync(ProgramaAquecimento programa)
-            => await _programasPersonalizadosRepository.UpdateAsync(programa);
+        {
+            await ValidarSimboloJaExiste(programa.SimboloProgresso);
+
+            return await _programasPersonalizadosRepository.UpdateAsync(programa);
+        }
+
+        private static bool SimboloUtilizadoProgramaPreCadastrado(char simbolo)
+        {
+            var tipos = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a =>
+                {
+                    try
+                    {
+                        return a.GetTypes();
+                    }
+                    catch
+                    {
+                        return Array.Empty<Type>();
+                    }
+                })
+                .Where(t => t.IsSubclassOf(typeof(ProgramaAquecimento)) && !t.IsAbstract);
+
+            foreach (var tipo in tipos)
+            {
+                var instancia = (ProgramaAquecimento)Activator.CreateInstance(tipo)!;
+
+                if (instancia.SimboloProgresso == simbolo)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

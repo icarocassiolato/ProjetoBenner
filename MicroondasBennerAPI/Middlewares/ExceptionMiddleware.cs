@@ -5,18 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MicroondasBennerAPI.Middlewares
 {
-    public class ExceptionMiddleware
+    public class ExceptionMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public ExceptionMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        private readonly RequestDelegate _next = next;
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -26,11 +20,11 @@ namespace MicroondasBennerAPI.Middlewares
             }
             catch (Exception ex)
             {
-                await HandleException(context, ex);
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        private async Task HandleException(HttpContext context, Exception exception)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var erroRepository = context.RequestServices.GetRequiredService<IErroRepository>();
 
@@ -45,7 +39,7 @@ namespace MicroondasBennerAPI.Middlewares
             };
 
             var erroSerializado = JsonSerializer.Serialize(problem);
-            await context.Response.WriteAsync(erroSerializado);
+            await context.Response.WriteAsync(problem.Title);
 
             await erroRepository.InsertAsync(erroSerializado);
         }

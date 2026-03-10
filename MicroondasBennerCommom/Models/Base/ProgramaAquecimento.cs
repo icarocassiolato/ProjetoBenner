@@ -1,6 +1,6 @@
 ﻿using MicroondasBennerCommon.Enums;
 
-namespace MicroondasBennerCommon.Models
+namespace MicroondasBennerCommon.Models.Base
 {
     public class ProgramaAquecimento
     {
@@ -13,7 +13,7 @@ namespace MicroondasBennerCommon.Models
         public bool EmAndamento { get; set; } = false;
         public bool Pausado { get; set; } = false;
         public ETipoPrograma TipoPrograma { get; set; } = ETipoPrograma.Padrao;
-        public char SimboloProgresso { get; set; } = '.';
+        public char SimboloProgresso { get; set; } = '.'; //Não declarei como char por causa da incompatibilidade quando o javascript manda para o backend
         public string Instrucoes { get; set; } = string.Empty;
     }
 }

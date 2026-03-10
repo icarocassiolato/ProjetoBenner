@@ -24,6 +24,10 @@
     <input id="instrucoes" placeholder="Instruções" />
 </div>
 
+<div>
+    <input id="simboloProgresso" maxlength="1" placeholder="Símbolo de Progresso" />
+</div>
+
 <br>
 
 <button onclick="salvarPrograma()">Salvar</button>
@@ -39,7 +43,7 @@
             <th>Tempo</th>
             <th>Potência</th>
             <th>Instruções</th>
-            <th>Ações</th>
+            <th>Símbolo progresso</th>
         </tr>
     </thead>
 
@@ -78,8 +82,9 @@
                 <td>${p.tempo}</td>
                 <td>${p.potencia}</td>
                 <td>${p.instrucoes}</td>
+                <td>${p.simboloProgresso}</td>
                 <td>
-                    <button onclick="editarPrograma(${p.id},'${p.nome}',${p.tempo},${p.potencia},'${p.instrucoes}')">Editar</button>
+                    <button onclick="editarPrograma(${p.id},'${p.nome}',${p.tempo},${p.potencia},'${p.instrucoes}', '${p.simboloProgresso}')">Editar</button>
                     <button onclick="excluirPrograma(${p.id})">Excluir</button>
                 </td>
             `;
@@ -88,7 +93,7 @@
         });
     }
 
-    function editarPrograma(id, nome, tempo, potencia, instrucoes){
+    function editarPrograma(id, nome, tempo, potencia, instrucoes, simboloProgresso){
 
         editandoId = id;
 
@@ -96,6 +101,7 @@
         document.getElementById("tempo").value = tempo;
         document.getElementById("potencia").value = potencia;
         document.getElementById("instrucoes").value = instrucoes;
+        document.getElementById("simboloProgresso").value = simboloProgresso;
     }
 
     function getUserIdFromToken() {
@@ -119,14 +125,16 @@
             tempo: Number(document.getElementById("tempo").value),
             potencia: Number(document.getElementById("potencia").value),
             instrucoes: document.getElementById("instrucoes").value,
+            simboloProgresso: document.getElementById("simboloProgresso").value,
             idusuario: getUserIdFromToken()
         };
 
-        if(editandoId){
+        let response;
 
+        if(editandoId){
             programa.id = editandoId;
 
-            await fetch(`https://localhost:5001/programaspersonalizados/${editandoId}`,{
+            response = await fetch(`https://localhost:5001/programaspersonalizados/${editandoId}`,{
                 method:"PUT",
                 headers:{
                     "Authorization":`Bearer ${token}`,
@@ -136,10 +144,8 @@
             });
 
             editandoId = null;
-
         }else{
-
-            await fetch("https://localhost:5001/programaspersonalizados",{
+            response = await fetch("https://localhost:5001/programaspersonalizados",{
                 method:"POST",
                 headers:{
                     "Authorization":`Bearer ${token}`,
@@ -147,7 +153,16 @@
                 },
                 body: JSON.stringify(programa)
             });
+        }
 
+        if(!response.ok) {
+            console.log("errooooooooooooooo");
+            const erro = await response.text();
+            console.log(erro);
+            alert(erro);
+            console.log(erro);
+            console.log("errooooooooooooooo2222");
+            return;
         }
 
         limparCampos();
@@ -175,6 +190,7 @@
         document.getElementById("tempo").value="";
         document.getElementById("potencia").value="";
         document.getElementById("instrucoes").value="";
+        document.getElementById("simboloProgresso").value="";
     }
 
     async function inicializar(){

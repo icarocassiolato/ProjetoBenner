@@ -1,5 +1,6 @@
 ﻿using MicroondasBenner.Helpers;
 using MicroondasBennerCommon.Enums;
+using MicroondasBennerFrontend.Models;
 using MicroondasBennerFrontend.Services;
 using Microsoft.AspNetCore.SignalR;
 

@@ -1,4 +1,4 @@
-﻿using MicroondasBennerCommon.Models;
+﻿using MicroondasBennerCommon.Models.Base;
 
 namespace MicroondasBennerAPI.Repository.Contracts
 {
@@ -10,5 +10,6 @@ namespace MicroondasBennerAPI.Repository.Contracts
         Task<int> InsertAsync(ProgramaAquecimento programa);
         Task<bool> UpdateAsync(ProgramaAquecimento programa);
         Task<bool> DeleteAsync(int id);
+        Task<bool> SimboloUtilizadoProgramaPersonalizadoAsync(char simbolo);
     }
 }
