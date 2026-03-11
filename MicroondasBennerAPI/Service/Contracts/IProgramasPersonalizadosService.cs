@@ -10,5 +10,6 @@ namespace MicroondasBennerAPI.Service.Contracts
         Task<int> InsertAsync(ProgramaAquecimento programa);
         Task<bool> UpdateAsync(ProgramaAquecimento programa);
         Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteByUsuarioIdAsync(int id);
     }
 }

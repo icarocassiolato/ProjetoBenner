@@ -5,12 +5,19 @@ using MicroondasBennerCommon.Models;
 
 namespace MicroondasBennerAPI.Service.Services
 {
-    public class UsuarioService(IUsuarioRepository usuarioRepository) : IUsuarioService
+    public class UsuarioService(
+        IUsuarioRepository usuarioRepository, 
+        IProgramasPersonalizadosService programasPersonalizadosService
+    ) : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IProgramasPersonalizadosService _programasPersonalizadosService = programasPersonalizadosService;
 
         public async Task<bool> DeleteAsync(int id)
-            => await _usuarioRepository.DeleteAsync(id);
+        {
+            await _programasPersonalizadosService.DeleteByUsuarioIdAsync(id);
+            return await _usuarioRepository.DeleteAsync(id);
+        }
 
         public async Task<IEnumerable<Usuario>> GetAllAsync()
             => await _usuarioRepository.GetAllAsync();

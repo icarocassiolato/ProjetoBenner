@@ -44,6 +44,9 @@ namespace MicroondasBennerAPI.Service.Services
             return await _programasPersonalizadosRepository.UpdateAsync(programa);
         }
 
+        public async Task<bool> DeleteByUsuarioIdAsync(int id)
+            => await _programasPersonalizadosRepository.DeleteByUsuarioIdAsync(id);
+
         //Poderia ser feito de forma mais simples, mas preferi usar Reflection, justamente para mostrar a técnica
         private static bool SimboloUtilizadoProgramaPreCadastrado(char simbolo)
         {

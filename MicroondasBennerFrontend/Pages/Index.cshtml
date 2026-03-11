@@ -250,8 +250,8 @@
                     btn.onclick = async () => {
 
                         try {
-                            console.log("Executando programa:", p);
-                            await connection.invoke("Iniciar", 0, p.tempo.toString(), p.potencia.toString());
+                            console.log("Executando programa personalizado (id):", p.id);
+                            await connection.invoke("IniciarPersonalizado", p.id);
                         }
                         catch (erro) {
                             console.error("Erro ao iniciar programa:", erro);

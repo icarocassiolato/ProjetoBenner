@@ -105,5 +105,16 @@ namespace MicroondasBennerAPI.Repository.Repositories
 
             return (await connection.QueryAsync(sql, new { simbolo })).Any();
         }
+
+        public async Task<bool> DeleteByUsuarioIdAsync(int id)
+        {
+            using var connection = _connectionFactory.Connection();
+
+            var sql = "DELETE FROM ProgramaPersonalizado WHERE IdUsuario = @Id";
+
+            var rows = await connection.ExecuteAsync(sql, new { id });
+
+            return rows > 0;
+        }
     }
 }
